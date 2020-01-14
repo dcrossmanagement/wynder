@@ -1,6 +1,14 @@
 import React from "react"
+import axios from "axios"
 
 class Home extends React.Component {
+    state = {people: []}
+
+    componentDidMount() {
+      axios.get("/users")
+      .then(response => this.setState({people: response.data}))
+    }
+
     render() {
         return(
             <>
@@ -10,7 +18,7 @@ class Home extends React.Component {
                 </div>
                   <div id="controls">
                     <div>
-                      <label htmlfor="gender">Gender</label>
+                      <label htmlFor="gender">Gender</label>
                       <select id="gender">
                           <option value="all">All</option>
                           <option value="male">Male</option>
@@ -42,42 +50,18 @@ class Home extends React.Component {
                   </div>  
               </div>
               <div id="people">
+                  {
+                    this.state.people.map((person, index) => {
+                      return(
+                        <div key={index} className={`person ${person.gender}`}>
+                          <div>{person.name.first} {person.name.last}</div>
+                          <img src={person.picture.medium} alt="profile-pic"/>
+                          <div>{person.dob.age}</div>
+                        </div>
+                      )
+                  })
+                }
                   <div className="person male">
-                      <div>Some guy or gal</div>
-                      <img src="https://randomuser.me/api/portraits/lego/1.jpg" alt="profile-pic"/>
-                      <div>33</div>
-                  </div>
-                  <div className="person female">
-                      <div>Some guy or gal</div>
-                      <img src="https://randomuser.me/api/portraits/lego/1.jpg" alt="profile-pic"/>
-                      <div>33</div>
-                  </div>
-                  <div className="person male">
-                      <div>Some guy or gal</div>
-                      <img src="https://randomuser.me/api/portraits/lego/1.jpg" alt="profile-pic"/>
-                      <div>33</div>
-                  </div>
-                  <div className="person female">
-                      <div>Some guy or gal</div>
-                      <img src="https://randomuser.me/api/portraits/lego/1.jpg" alt="profile-pic"/>
-                      <div>33</div>
-                  </div>
-                  <div className="person male">
-                      <div>Some guy or gal</div>
-                      <img src="https://randomuser.me/api/portraits/lego/1.jpg" alt="profile-pic"/>
-                      <div>33</div>
-                  </div>
-                  <div className="person female">
-                      <div>Some guy or gal</div>
-                      <img src="https://randomuser.me/api/portraits/lego/1.jpg" alt="profile-pic"/>
-                      <div>33</div>
-                  </div>
-                  <div className="person male">
-                      <div>Some guy or gal</div>
-                      <img src="https://randomuser.me/api/portraits/lego/1.jpg" alt="profile-pic"/>
-                      <div>33</div>
-                  </div>
-                  <div className="person female">
                       <div>Some guy or gal</div>
                       <img src="https://randomuser.me/api/portraits/lego/1.jpg" alt="profile-pic"/>
                       <div>33</div>
