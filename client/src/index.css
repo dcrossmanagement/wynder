@@ -36,6 +36,7 @@
   place-items: center;
   border-radius: 3px;
   padding: 5px;
+  cursor: pointer;
 }
 
 .person img {
@@ -43,7 +44,6 @@
   object-fit: cover;
   border-radius: 100%;
   margin: 5px;
-  cursor: pointer;
 }
 
 .person:hover {
