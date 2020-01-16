@@ -1,16 +1,56 @@
 import React from "react"
 import axios from "axios"
 
+const distance = (point1, point2) => {
+  let lat1 = Number(point1.latitude)
+  let lat2 = Number(point2.latitude)
+  let lon1 = Number(point1.longitude)
+  let lon2 = Number(point2.longitude)
+
+
+	if ((lat1 == lat2) && (lon1 == lon2)) {
+		return 0;
+	}
+	else {
+		var radlat1 = Math.PI * lat1/180;
+		var radlat2 = Math.PI * lat2/180;
+		var theta = lon1-lon2;
+		var radtheta = Math.PI * theta/180;
+		var dist = Math.sin(radlat1) * Math.sin(radlat2) + Math.cos(radlat1) * Math.cos(radlat2) * Math.cos(radtheta);
+		if (dist > 1) {
+			dist = 1;
+		}
+		dist = Math.acos(dist);
+		dist = dist * 180/Math.PI;
+		dist = dist * 60 * 1.1515;
+		return dist;
+	}
+}
+
 class Home extends React.Component {
     state = {
       people: [],
       gender: "all",
       minAge: 18,
-      maxAge: 100}
+      maxAge: 100,
+      latitude: null,
+      longitude: null,
+      radius: 1000,
+      loading: true
+    }
 
     componentDidMount() {
       axios.get("/users")
-      .then(response => this.setState({people: response.data}))
+      .then(response => this.setState({people: response.data, loading: false}))
+      navigator.geolocation.getCurrentPosition(
+        position => this.setState({latitude: position.coords.latitude, longitude: position.coords.longitude}),
+        () => console.log("Something went wrong"),
+        {
+          enableHighAccuracy: true,
+          timeout: 5000,
+          maximumAge: 0
+        }
+      )
     }
 
     handleChange = event => {
@@ -18,7 +58,7 @@ class Home extends React.Component {
     }
 
     render() {
-        const {people, gender, minAge, maxAge} = this.state
+        const {people, gender, minAge, maxAge, latitude, longitude, radius, loading} = this.state
         return(
             <>
               <div id="top">
@@ -58,18 +98,25 @@ class Home extends React.Component {
                           onChange={this.handleChange}
                         />
                     </div>
+                  { latitude !== null && longitude !== null &&
                     <div>
                         <label>Radius</label>
                         <input
                           id="radius"
+                          name="radius"
                           type="range"
                           min="0"
                           max="5000"
+                          value={radius}
+                          onChange={this.handleChange}
                         />
+                        {radius} mi
                     </div>
+                  }
                   </div>  
               </div>
               <div id="people">
+                  {loading && <h3>Loading...</h3>}
                   {
                     people.filter((person) => {
                       if(gender === "all") {
@@ -80,6 +127,14 @@ class Home extends React.Component {
                       }
                     })
                     .filter(person => person.dob.age >= minAge && person.dob.age <= maxAge)
+                    .filter(person => {
+                      if(!latitude || !longitude) {
+                        return true
+                      }
+                      else {
+                        return distance(person.location.coordinates, {latitude, longitude}) <= radius
+                      }
+                    })
                     .map((person, index) => {
                       return(
                         <div key={index} className={`person ${person.gender}`}>
