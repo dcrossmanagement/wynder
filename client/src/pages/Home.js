@@ -14,7 +14,7 @@ class Home extends React.Component {
     }
 
     handleChange = event => {
-      this.setState({gender: event.target.value})
+      this.setState({[event.target.name]: event.target.value})
     }
 
     render() {
@@ -42,14 +42,20 @@ class Home extends React.Component {
                     <div>
                         <input
                           type="number"
+                          name="minAge"
                           min="18"
                           max="100"
+                          value={minAge}
+                          onChange={this.handleChange}
                         />
                         <label>to</label>
                         <input
                           type="number"
+                          name="maxAge"
                           min="18"
                           max="100"
+                          value={maxAge}
+                          onChange={this.handleChange}
                         />
                     </div>
                     <div>
@@ -73,6 +79,7 @@ class Home extends React.Component {
                         return person.gender === gender
                       }
                     })
+                    .filter(person => person.dob.age >= minAge && person.dob.age <= maxAge)
                     .map((person, index) => {
                       return(
                         <div key={index} className={`person ${person.gender}`}>
