@@ -2,14 +2,23 @@ import React from "react"
 import axios from "axios"
 
 class Home extends React.Component {
-    state = {people: []}
+    state = {
+      people: [],
+      gender: "all",
+      minAge: 18,
+      maxAge: 100}
 
     componentDidMount() {
       axios.get("/users")
       .then(response => this.setState({people: response.data}))
     }
 
+    handleChange = event => {
+      this.setState({gender: event.target.value})
+    }
+
     render() {
+        const {people, gender, minAge, maxAge} = this.state
         return(
             <>
               <div id="top">
@@ -19,7 +28,12 @@ class Home extends React.Component {
                   <div id="controls">
                     <div>
                       <label htmlFor="gender">Gender</label>
-                      <select id="gender">
+                      <select 
+                        id="gender"
+                        name="gender"
+                        value={gender}
+                        onChange={this.handleChange}
+                      >
                           <option value="all">All</option>
                           <option value="male">Male</option>
                           <option value="female">Female</option>
@@ -51,7 +65,15 @@ class Home extends React.Component {
               </div>
               <div id="people">
                   {
-                    this.state.people.map((person, index) => {
+                    people.filter((person) => {
+                      if(gender === "all") {
+                        return true
+                      }
+                      else {
+                        return person.gender === gender
+                      }
+                    })
+                    .map((person, index) => {
                       return(
                         <div key={index} className={`person ${person.gender}`}>
                           <div>{person.name.first} {person.name.last}</div>
@@ -61,11 +83,6 @@ class Home extends React.Component {
                       )
                   })
                 }
-                  <div className="person male">
-                      <div>Some guy or gal</div>
-                      <img src="https://randomuser.me/api/portraits/lego/1.jpg" alt="profile-pic"/>
-                      <div>33</div>
-                  </div>
               </div>
 
             </>
