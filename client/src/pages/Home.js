@@ -8,7 +8,7 @@ const distance = (point1, point2) => {
   let lon2 = Number(point2.longitude)
 
 
-	if ((lat1 == lat2) && (lon1 == lon2)) {
+	if ((lat1 === lat2) && (lon1 === lon2)) {
 		return 0;
 	}
 	else {
@@ -33,9 +33,10 @@ class Home extends React.Component {
       gender: "all",
       minAge: 18,
       maxAge: 100,
+      query: "",
       latitude: null,
       longitude: null,
-      radius: 1000,
+      radius: 5000,
       loading: true
     }
 
@@ -58,12 +59,20 @@ class Home extends React.Component {
     }
 
     render() {
-        const {people, gender, minAge, maxAge, latitude, longitude, radius, loading} = this.state
+        const {people, gender, minAge, maxAge, query, latitude, longitude, radius, loading} = this.state
         return(
             <>
               <div id="top">
                 <div id="header">
                   <h1>Wynder</h1>
+                  <input
+                    type="text"
+                    name="query"
+                    value={query}
+                    onChange={this.handleChange}
+                    placeholder="Search"
+                    autoComplete="off"
+                  />
                 </div>
                   <div id="controls">
                     <div>
@@ -133,6 +142,15 @@ class Home extends React.Component {
                       }
                       else {
                         return distance(person.location.coordinates, {latitude, longitude}) <= radius
+                      }
+                    })
+                    .filter(person => {
+                      if(!query) {
+                        return true
+                      }
+                      else {
+                        return person.name.first.toLowerCase().startsWith(query.toLowerCase()) ||
+                               person.name.last.toLowerCase().startsWith(query.toLowerCase())
                       }
                     })
                     .map((person, index) => {

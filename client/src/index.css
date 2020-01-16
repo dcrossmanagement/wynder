@@ -12,6 +12,14 @@
   background-color: lightgoldenrodyellow;
 }
 
+#header h1 {
+  margin: 2px;
+}
+
+#header input {
+  margin: 8px;
+}
+
 #controls {
   background-color: lightgray;
 }
