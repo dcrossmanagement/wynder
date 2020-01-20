@@ -1,6 +1,13 @@
 {
+  "name": "wynder",
+  "version": "1.0.0",
+  "license": "MIT",
   "dependencies": {
     "axios": "^0.19.1",
     "express": "^4.17.1"
+  },
+  "scripts": {
+    "start": "node server.js",
+    "heroku-postbuild": "cd client && yarn && yarn run build"
   }
 }
