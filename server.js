@@ -5,7 +5,7 @@ const axios = require("axios")
 const app = express()
 
 app.get("/users",(request, response) => {
-    axios.get(`https://randomuser.me/api/?results=${proccess.env.RESULTS || "500"}&nat=us&inc=gender,name,dob,picture,location&seed=wynder`)
+    axios.get(`https://randomuser.me/api/?results=${process.env.RESULTS || 500}&nat=us&inc=gender,name,dob,picture,location&seed=wynder`)
     .then(randomUserResponse => {
         response.json(randomUserResponse.data.results || [])
     })
